@@ -138,6 +138,7 @@ class BasicLayout extends React.PureComponent {
         />
         <Layout>
           <GlobalHeader
+            dispatch={this.props.dispatch}
             logo={logo}
             currentUser={currentUser}
             fetchingNotices={fetchingNotices}

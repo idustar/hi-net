@@ -52,7 +52,7 @@ export default class StepForm extends PureComponent {
         </div>
         <div className={styles.statItem}>
             <p>Dataset</p>
-          <p>{this.props.model.datasetType || 'None'}</p>
+          <p>{this.props.model.datasetName || 'None'}</p>
         </div>
         <div className={styles.statItem}>
           <p>Jobs</p>

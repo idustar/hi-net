@@ -53,9 +53,6 @@ export default class WorkspaceList extends PureComponent {
   componentDidMount() {
     this.props.dispatch({
       type: 'workspace/fetch',
-      payload: {
-        count: 8,
-      },
     });
   }
 

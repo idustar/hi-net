@@ -59,6 +59,10 @@ export const getRouterData = (app) => {
     '/community': {
       component: dynamicWrapper(app, ['post'], () => import('../routes/Community/AllPost')),
     },
+    '/posts/:id?': {
+      component: dynamicWrapper(app, ['post'], () => import('../routes/Community/AllPost')),
+    },
+
 
     // '/dashboard/analysis': {
     //   component: dynamicWrapper(app, ['chart'], () => import('../routes/Dashboard/Analysis')),

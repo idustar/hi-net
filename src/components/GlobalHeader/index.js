@@ -2,7 +2,7 @@ import React, {PureComponent} from 'react';
 import {Layout, Menu, Icon, Spin, Tag, Dropdown, Avatar, Divider, Tooltip} from 'antd';
 
 import Debounce from 'lodash-decorators/debounce';
-import {Link} from 'dva/router';
+import {Link, routerRedux} from 'dva/router';
 import styles from './index.less';
 
 const {Header} = Layout;
@@ -28,7 +28,7 @@ export default class GlobalHeader extends PureComponent {
   render() {
     const {
       currentUser, collapsed, isMobile, logo,
-      onMenuClick,
+      onMenuClick, dispatch
     } = this.props;
     const menu = (
       <Menu className={styles.menu} selectedKeys={[]} onClick={onMenuClick}>
@@ -58,18 +58,21 @@ export default class GlobalHeader extends PureComponent {
         <div className={styles.right}>
           <Tooltip placement="bottom" title="home">
             <Icon
+              onClick={()=>dispatch(routerRedux.push('/hello'))}
               className={styles.trigger}
               type="home"
             />
           </Tooltip>
           <Tooltip placement="bottom" title="community">
             <Icon
+              onClick={()=>dispatch(routerRedux.push('/community'))}
               className={styles.trigger}
               type="team"
             />
           </Tooltip>
           <Tooltip placement="bottom" title="console">
             <Icon
+              onClick={()=>dispatch(routerRedux.push('/'))}
               className={styles.trigger}
               type="code-o"
             />

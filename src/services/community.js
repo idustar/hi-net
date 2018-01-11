@@ -11,8 +11,8 @@ export async function getPost(postId) {
   return request(`${apiUrl}/posts/post?postId=${postId}`);
 }
 
-export async function addPost({postId, params}) {
-  return request(`${apiUrl}/posts/add?post_id=${postId}`, {
+export async function addPost(params) {
+  return request(`${apiUrl}/posts/add`, {
     method: 'POST',
     body: params,
   });
@@ -31,8 +31,12 @@ export async function deletePost(postId) {
   });
 }
 
-export async function addComment({postId, params}) {
-  return request(`${apiUrl}/posts/comment?postId=${postId}`, {
+export async function getComments(postId) {
+  return request(`${apiUrl}/posts/comment?postId=${postId}`);
+}
+
+export async function addComment(params) {
+  return request(`${apiUrl}/posts/comment/add`, {
     method: 'POST',
     body: params,
   });
@@ -54,5 +58,9 @@ export async function deleteLike({postId, userId}) {
   return request(`${apiUrl}/posts/comment?postId=${postId}&userId=${userId}`, {
     method: 'DELETE',
   });
+}
+
+export async function getPostsByUser(userId) {
+  return request(`${apiUrl}/user/posts?userId=${userId}`);
 }
 

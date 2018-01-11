@@ -1,55 +1,16 @@
-import { getAllPosts, getPost, addPost, updatePost, deletePost } from '../services/community';
+import { getAllPosts, getPost, addPost, updatePost, deletePost,
+  getComments, addComment, getPostsByUser} from '../services/community';
 import { notification } from 'antd';
 
 export default {
   namespace: 'post',
 
   state: {
-    list: [
-      {
-        postId: "wqLvIbWCVQ",
-        userId: "adduser3",
-        title: "For most people in the world",
-        topic: null,
-        keywords: null,
-        content: "new content2, For most people in the worlFor most people in the worlFor most people in the worlFor most people in the worlFor most people in the worlFor most people in the worlFor most people in the worl",
-        timeStamp: 1515686324016,
-      }, {
-        postId: "wqLvIbWCVQ",
-        userId: "adduser3",
-        title: "add new post1111111",
-        topic: null,
-        keywords: null,
-        content: "new content2",
-        timeStamp: 1515686324016,
-      }, {
-        postId: "wqLvIbWCVQ",
-        userId: "adduser3",
-        title: "add new post1111111",
-        topic: null,
-        keywords: null,
-        content: "new content2",
-        timeStamp: 1515686324016,
-      }, {
-        postId: "wqLvIbWCVQ",
-        userId: "adduser3",
-        title: "add new post1111111",
-        topic: null,
-        keywords: null,
-        content: "new content2",
-        timeStamp: 1515686324016,
-      }, {
-        postId: "wqLvIbWCVQ",
-        userId: "adduser3",
-        title: "add new post1111111",
-        topic: null,
-        keywords: null,
-        content: "new content2",
-        timeStamp: 1515686324016,
-      },
-    ],
+    list: [],
     item: {},
     loading: true,
+    commentLoading: true,
+    comments: [],
   },
 
   effects: {
@@ -58,15 +19,34 @@ export default {
         type: 'changeLoading',
         payload: true,
       });
-      // const response = yield call(getAllPosts, payload);
-      // if (Array.isArray(response)) {
-      //   yield put({
-      //     type: 'saveList',
-      //     payload: response,
-      //   });
-      // } else {
-      //   notification.error({message: 'get posts failed!'});
-      // }
+      const response = yield call(getAllPosts, payload);
+      if (Array.isArray(response)) {
+        yield put({
+          type: 'saveList',
+          payload: response,
+        });
+      } else {
+        notification.error({message: 'get posts failed!'});
+      }
+      yield put({
+        type: 'changeLoading',
+        payload: false,
+      });
+    },
+    *fetchUserList({ payload }, { call, put }) {
+      yield put({
+        type: 'changeLoading',
+        payload: true,
+      });
+      const response = yield call(getPostsByUser, payload);
+      if (Array.isArray(response)) {
+        yield put({
+          type: 'saveList',
+          payload: response,
+        });
+      } else {
+        notification.error({message: 'get posts failed!'});
+      }
       yield put({
         type: 'changeLoading',
         payload: false,
@@ -125,6 +105,36 @@ export default {
         payload: false,
       });
     },
+    *fetchComments ({ payload }, { call, put }) {
+      yield put({
+        type: 'changeCommentLoading',
+        payload: true,
+      });
+      const response = yield call(getComments, payload);
+      if (Array.isArray(response)) {
+        yield put({
+          type: 'saveComments',
+          payload: response,
+        });
+      } else {
+        notification.error({message: 'get comments failed!'});
+      }
+      yield put({
+        type: 'changeCommentLoading',
+        payload: false,
+      });
+    },
+    * addComment ({ payload }, { call, put }) {
+      yield put({
+        type: 'changeCommentLoading',
+        payload: true,
+      });
+      const response = yield call(addComment, payload);
+      yield put({
+        type: 'changeCommentLoading',
+        payload: false,
+      });
+    },
   },
 
   reducers: {
@@ -132,6 +142,12 @@ export default {
       return {
         ...state,
         list: action.payload,
+      };
+    },
+    saveComments(state, action) {
+      return {
+        ...state,
+        comments: action.payload,
       };
     },
     save(state, action) {
@@ -144,6 +160,12 @@ export default {
       return {
         ...state,
         loading: action.payload,
+      };
+    },
+    changeCommentLoading(state, action) {
+      return {
+        ...state,
+        commentLoading: action.payload,
       };
     },
   },
