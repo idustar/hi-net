@@ -67,11 +67,11 @@ export default class ModelList extends PureComponent {
     const CardInfo = ({layers, state}) => (
       <div className={styles.cardInfo}>
         <div>
-          <p>Layers</p>
+          <p>Dataset</p>
           <p>{layers}</p>
         </div>
         <div>
-          <p>State</p>
+          <p>Type</p>
           <p>{state}</p>
         </div>
       </div>
@@ -165,7 +165,7 @@ export default class ModelList extends PureComponent {
                     <Icon type="plus"/> New Model
                   </Button>
                   <Button type="dashed" className={styles.newButton}
-                          onClick={() => {this.props.dispatch(routerRedux.push(`/`));}}>
+                          onClick={() => {window.location.href=`http://111.231.143.115:8888/`;}}>
                     <Icon type="plus"/> New Notebook
                   </Button>
                 </List.Item>

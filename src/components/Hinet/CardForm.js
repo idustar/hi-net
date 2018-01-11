@@ -1,7 +1,7 @@
 import React, {PureComponent} from 'react';
 import {connect} from 'dva';
 import {
-  Form, Input, DatePicker, Select, Button, Card, InputNumber, Radio, Icon, Tooltip, message
+  Form, Input, DatePicker, Select, Button, Card, InputNumber, Radio, Icon, Tooltip, notification
 } from 'antd';
 
 import styles from './CardForm.less';
@@ -27,7 +27,7 @@ export default class CardForm extends PureComponent {
             values
           },
         });
-        message.success('Saved.');
+        notification.success({message:'saved.'});
       }
     });
   }
