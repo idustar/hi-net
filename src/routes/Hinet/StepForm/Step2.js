@@ -1,114 +1,71 @@
 import React from 'react';
-import { connect } from 'dva';
-import { Form, Input, Button, Alert, Divider } from 'antd';
-import { routerRedux } from 'dva/router';
-import { digitUppercase } from '../../../utils/utils';
+import {connect} from 'dva';
+import {Form, Input, Button, Alert, Divider, Row, Col, List, Card, message} from 'antd';
+import {routerRedux} from 'dva/router';
+import {DropTarget, DragDropContext} from 'react-dnd';
 import styles from './style.less';
+import BuildContainer from '../../../components/Hinet/BuildContainer';
+import FooterToolbar from '../../../components/FooterToolbar';
 
-const formItemLayout = {
-  labelCol: {
-    span: 5,
-  },
-  wrapperCol: {
-    span: 19,
-  },
-};
 
-@Form.create()
 class Step2 extends React.PureComponent {
   render() {
-    const { form, data, dispatch, submitting } = this.props;
-    const { getFieldDecorator, validateFields } = form;
+    const {dispatch, cards, layers, globalVariable} = this.props;
     const onPrev = () => {
-      dispatch(routerRedux.push('/form/step-form'));
+      dispatch(routerRedux.push(`/model/${this.props.match.params.id}/dataset`));
     };
-    const onValidateForm = (e) => {
+    const onSave = (e) => {
       e.preventDefault();
-      validateFields((err, values) => {
-        if (!err) {
-          dispatch({
-            type: 'form/submitStepForm',
-            payload: {
-              ...data,
-              ...values,
-            },
-          });
-        }
-      });
+      dispatch({
+        type: 'model/save'
+      })
+    };
+    const onTrain = (e) => {
+      e.preventDefault();
+      onSave(e);
+      dispatch(routerRedux.push(`/model/${this.props.match.params.id}/result`));
     };
     return (
-      <Form layout="horizontal" className={styles.stepForm}>
-        <Alert
-          closable
-          showIcon
-          message="确认转账后，资金将直接打入对方账户，无法退回。"
-          style={{ marginBottom: 24 }}
+
+      <div className={styles.stepForm} style={{marginBottom: 40}}>
+        <BuildContainer
+          cards={cards}
+          layers={layers}
+          dispatch={dispatch}
+          globalVariable={globalVariable}
         />
-        <Form.Item
-          {...formItemLayout}
-          className={styles.stepFormText}
-          label="付款账户"
-        >
-          {data.payAccount}
-        </Form.Item>
-        <Form.Item
-          {...formItemLayout}
-          className={styles.stepFormText}
-          label="收款账户"
-        >
-          {data.receiverAccount}
-        </Form.Item>
-        <Form.Item
-          {...formItemLayout}
-          className={styles.stepFormText}
-          label="收款人姓名"
-        >
-          {data.receiverName}
-        </Form.Item>
-        <Form.Item
-          {...formItemLayout}
-          className={styles.stepFormText}
-          label="转账金额"
-        >
-          <span className={styles.money}>{data.amount}</span>
-          <span className={styles.uppercase}>（{digitUppercase(data.amount)}）</span>
-        </Form.Item>
-        <Divider style={{ margin: '24px 0' }} />
-        <Form.Item
-          {...formItemLayout}
-          label="支付密码"
-          required={false}
-        >
-          {getFieldDecorator('password', {
-            initialValue: '123456',
-            rules: [{
-              required: true, message: '需要支付密码才能进行支付',
-            }],
-          })(
-            <Input type="password" autoComplete="off" style={{ width: '80%' }} />
-          )}
-        </Form.Item>
-        <Form.Item
-          style={{ marginBottom: 8 }}
-          wrapperCol={{
-            xs: { span: 24, offset: 0 },
-            sm: { span: formItemLayout.wrapperCol.span, offset: formItemLayout.labelCol.span },
-          }}
-          label=""
-        >
-          <Button type="primary" onClick={onValidateForm} loading={submitting}>
-            提交
-          </Button>
-          <Button onClick={onPrev} style={{ marginLeft: 8 }}>
-            上一步
-          </Button>
-        </Form.Item>
-      </Form>
+
+        <FooterToolbar children={[
+          <Button type="dashed" onClick={onPrev} key={0}>
+            Prev Step
+          </Button>,
+          <Button type="primary" onClick={onSave} key={1}>
+            Save
+          </Button>,
+          <Button type="primary" onClick={onTrain} key={2}>
+            Train
+          </Button>]
+        } />
+      </div>
+
+
     );
   }
 }
 
-export default connect(({ form }) => ({
-  submitting: form.stepFormSubmitting,
-  data: form.step,
-}))(Step2);
+export default connect(({model}) => {
+  let layers;
+  const l = model.layers;
+  if (model.model.datasetType === 'dense') {
+    layers = [l[1], l[3], l[4]];
+  } else if (model.model.datasetType === 'rnn') {
+    layers = [l[4], l[5]];
+  } else {
+    layers = [l[0], l[1], l[2], l[3], l[4]];
+  }
+  return {
+    cards: model.cards,
+    layers,
+    globalVariable: model.globalVariable,
+  }
+})(Step2);

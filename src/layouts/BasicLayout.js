@@ -149,8 +149,8 @@ class BasicLayout extends React.PureComponent {
             onMenuClick={this.handleMenuClick}
             onNoticeVisibleChange={this.handleNoticeVisibleChange}
           />
-          <Content style={{ margin: '24px 24px 0', height: '100%' }}>
-            <div style={{ minHeight: 'calc(100vh - 260px)' }}>
+          <Content style={{  height: '100%', overflow: 'auto' }}>
+            <div style={{ height: 'calc(100vh - 64px)', margin: '24px 24px 0' }}>
               <Switch>
                 {
                   redirectData.map(item =>

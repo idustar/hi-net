@@ -34,7 +34,7 @@ export default class Register extends Component {
   };
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.register.status === 'ok') {
+    if (nextProps.register.code === 200) {
       this.props.dispatch(routerRedux.push('/'));
     }
   }
@@ -156,14 +156,15 @@ export default class Register extends Component {
         <h3>Register</h3>
         <Form onSubmit={this.handleSubmit}>
           <FormItem>
-            {getFieldDecorator('username', {
+            {getFieldDecorator('email', {
               rules: [
                 {
                   required: true,
-                  message: 'Please input username！',
+                  type: 'email',
+                  message: 'Please input email address！',
                 }
               ],
-            })(<Input size="large" placeholder="your username" />)}
+            })(<Input size="large" placeholder="your email" />)}
           </FormItem>
           <FormItem help={this.state.help}>
             <Popover

@@ -8,10 +8,12 @@ const map = {
     props: {
       size: 'large',
       prefix: <Icon type="user" className={styles.prefixIcon} />,
-      placeholder: 'your account',
+      placeholder: 'your email',
     },
     rules: [{
-      required: true, message: 'Your account is required！',
+      required: true, message: 'your email is required',
+    }, {
+      type: 'email', message: 'email address is invalid.'
     }],
   },
   Password: {
@@ -23,7 +25,7 @@ const map = {
       placeholder: 'your password',
     },
     rules: [{
-      required: true, message: 'Your password is required！',
+      required: true, message: 'your password is required',
     }],
   }
 };

@@ -1,11 +1,18 @@
 @import "~antd/lib/style/themes/default.less";
 
 .stepForm {
-  margin: 40px auto 0;
-  max-width: 500px;
+}
+
+.item {
+  margin-top: 15px;
 }
 
 .chooseList {
+  overflow: hidden;
+}
+
+.chooseList div {
+  overflow: hidden;
 }
 
 .stepFormText {
@@ -25,6 +32,7 @@
 }
 
 .desc {
+  margin-bottom: 50px;
   padding: 0 56px;
   color: @text-color-secondary;
   h3 {
@@ -75,4 +83,22 @@
 
 .uppercase {
   font-size: 12px;
+}
+
+.selected {
+  border-color: dodgerblue;
+}
+
+.selected:hover {
+  border-color: #3e70ff;
+  box-shadow: 0 0 10px rgba(31, 144, 255, 0.5);
+}
+
+.newButton {
+  background-color: #fff;
+  border-color: @border-color-base;
+  border-radius: @border-radius-sm;
+  color: @text-color-secondary;
+  width: 100%;
+  height: 117px;
 }

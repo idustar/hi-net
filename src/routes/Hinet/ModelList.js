@@ -1,43 +1,70 @@
 import React, {PureComponent} from 'react';
 import {connect} from 'dva';
 import numeral from 'numeral';
-import {Card, Button, Icon, List, Avatar, Tooltip, } from 'antd';
+import { routerRedux } from 'dva/router';
+
+import {Card, Button, Icon, List, Avatar, Tooltip, Modal, Form, Input} from 'antd';
 
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import Ellipsis from '../../components/Ellipsis';
 
 import styles from './ModelList.less';
-
-const formatWan = (val) => {
-  const v = val * 1;
-  if (!v || isNaN(v)) return '';
-
-  let result = val;
-  if (val > 10000) {
-    result = Math.floor(val / 10000);
-    result = <span>{result}<em className={styles.wan}>万</em></span>;
-  }
-  return result;
-};
+import workspace from "../../models/workspace";
 
 @connect(state => ({
-  list: state.workspace,
+  loading: state.workspace.loading,
+  list: state.workspace.models,
+  workspace: state.workspace.workspace,
 }))
 export default class ModelList extends PureComponent {
+  constructor(props) {
+    super(props);
+    this.state = {
+      modalVisible: false,
+      addInputValue: '',
+    }
+  }
+  handleModalVisible = (flag) => {
+    this.setState({
+      modalVisible: !!flag,
+    });
+  }
+
+  handleAddInput = (e) => {
+    this.setState({
+      addInputValue: e.target.value,
+    });
+  }
+
+  handleDelete = (id) => {
+    this.props.dispatch({
+      type: 'workspace/rmModel',
+      payload: id,
+    });
+  }
+
+  handleAdd = () => {
+    this.props.dispatch({
+      type: 'workspace/addModel',
+      payload: this.state.addInputValue,
+    });
+
+    this.setState({
+      modalVisible: false,
+    });
+  }
   componentDidMount() {
     this.props.dispatch({
-      type: 'workspace/fetch',
-      payload: {
-        count: 8,
-      },
+      type: 'workspace/fetchModels',
+      payload: parseInt(this.props.match.params.id, 10),
     });
   }
 
 
   render() {
-    const {list: {list, loading}} = this.props;
+    const {list, loading, workspace} = this.props;
 
-    const CardInfo = ({ layers, state }) => (
+    const CardInfo = ({layers, state}) => (
       <div className={styles.cardInfo}>
         <div>
           <p>Layers</p>
@@ -53,12 +80,9 @@ export default class ModelList extends PureComponent {
     const content = (
       <div className={styles.pageHeaderContent}>
         <p>
-          Description of this workspace
+          Enjoy coding, enjoy training.
         </p>
         <div className={styles.contentLink}>
-          <a>
-            <img alt="" src="https://gw.alipayobjects.com/zos/rmsportal/MjEImQtenlyueSmVEfUD.svg"/> Back to workplace list
-          </a>
           <a>
             <img alt="" src="https://gw.alipayobjects.com/zos/rmsportal/NbuDUAuBlIApFuDvWiND.svg"/> Documentation
           </a>
@@ -72,60 +96,97 @@ export default class ModelList extends PureComponent {
     const extraContent = (
       <div className={styles.extraContent}>
         <div className={styles.statItem}>
+          <p>ID</p>
+          <p>{workspace.id}</p>
+        </div>
+        <div className={styles.statItem}>
           <p>Models</p>
           <p>{list.length || '0'}</p>
         </div>
         <div className={styles.statItem}>
-          <p>Calculated</p>
-          <p>8<span> / {list.length || '0'}</span></p>
-        </div>
-        <div className={styles.statItem}>
-          <p>Created At</p>
-          <p>2017</p>
+          <p>Notebooks</p>
+          <p>0</p>
         </div>
       </div>
     );
 
     return (
       <PageHeaderLayout
-        title={'Demo Workspace'}
+        title={workspace.name || ''}
         content={content}
         extraContent={extraContent}
       >
         <div className={styles.filterCardList}>
           <List
             rowKey="id"
-            grid={{ gutter: 24, xl: 4, lg: 3, md: 3, sm: 2, xs: 1 }}
+            grid={{gutter: 24, xl: 4, lg: 3, md: 3, sm: 2, xs: 1}}
             loading={loading}
-            dataSource={list}
-            renderItem={item => (
-              <List.Item key={item.id}>
-                <Card
-                  hoverable
-                  bodyStyle={{ paddingBottom: 20 }}
-                  actions={[
-                    <Tooltip title="View"><Icon type="search" /></Tooltip>,
-                    <Tooltip title="Edit"><Icon type="edit" /></Tooltip>,
-                    <Tooltip title="Delete"><Icon type="delete" /></Tooltip>,
-                  ]}
-                >
-                  <Card.Meta
-                    avatar={<Avatar
-                      style={{color: '#e2e4f5', backgroundColor: '#1e75fd', verticalAlign: 'middle'}}
-                      size="small">{item.title.charAt(0)}</Avatar>}
-                    title={item.title}
-                  />
-                  <div className={styles.cardItemContent}>
-                    <CardInfo
-                      layers={numeral(item.newUser).format('0,0')}
-                      state={'Trained'}
+            dataSource={['', ...list]}
+            renderItem={item => (item ? (
+                <List.Item key={item.id}>
+                  <Card
+                    hoverable
+                    bodyStyle={{paddingBottom: 20}}
+                    actions={[
+                      <Tooltip title="View">
+                        <Icon type="search"
+                              onClick={() => {
+                                this.props.dispatch(routerRedux.push(`/model/${item.id}/result`));
+                              }}/>
+                      </Tooltip>,
+                      <Tooltip title="Edit">
+                        <Icon type="edit"
+                              onClick={() => {
+                                this.props.dispatch(routerRedux.push(`/model/${item.id}/dataset`));
+                              }}/>
+                      </Tooltip>,
+                      <Tooltip title="Delete">
+                        <Icon type="delete" onClick={() => this.handleDelete(item.id)} />
+                      </Tooltip>,
+                    ]}
+                  >
+                    <Card.Meta
+                      avatar={<Avatar
+                        style={{color: '#e2e4f5', backgroundColor: '#1e75fd', verticalAlign: 'middle'}}
+                        size="small">{item.name.charAt(0)}</Avatar>}
+                      title={item.name}
                     />
-                  </div>
-                </Card>
-              </List.Item>
+                    <div className={styles.cardItemContent}>
+                      <CardInfo
+                        layers={item.datasetName || 'none'}
+                        state={item.type || 'none'}
+                      />
+                    </div>
+                  </Card>
+                </List.Item>
+              ) : (
+                <List.Item>
+                  <Button type="dashed" className={styles.newButton} onClick={() => this.handleModalVisible(true)}>
+                    <Icon type="plus"/> New Model
+                  </Button>
+                  <Button type="dashed" className={styles.newButton}
+                          onClick={() => {this.props.dispatch(routerRedux.push(`/`));}}>
+                    <Icon type="plus"/> New Notebook
+                  </Button>
+                </List.Item>
+              )
             )}
           />
         </div>
+        <Modal
+          title="New model"
+          visible={this.state.modalVisible}
+          onOk={this.handleAdd}
+          onCancel={() => this.handleModalVisible()}
+        >
+          <Form.Item
+            labelCol={{ span: 5 }}
+            wrapperCol={{ span: 15 }}
+            label="name"
+          >
+            <Input placeholder="please input" onChange={this.handleAddInput} value={this.state.addInputValue} />
+          </Form.Item>
+        </Modal>
       </PageHeaderLayout>
     );
   }

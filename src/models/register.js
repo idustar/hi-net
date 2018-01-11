@@ -1,19 +1,23 @@
-import { fakeRegister } from '../services/api';
+import { register } from '../services/api';
 
 export default {
   namespace: 'register',
 
   state: {
-    status: undefined,
+    code: undefined,
   },
 
   effects: {
-    *submit(_, { call, put }) {
+    *submit({ payload }, { call, put }) {
       yield put({
         type: 'changeSubmitting',
         payload: true,
       });
-      const response = yield call(fakeRegister);
+      const response = yield call(register, payload);
+      if (response.code === 200) {
+        localStorage.setItem('id', response.result.id);
+        localStorage.setItem('email', response.result.email);
+      }
       yield put({
         type: 'registerHandle',
         payload: response,
@@ -29,7 +33,7 @@ export default {
     registerHandle(state, { payload }) {
       return {
         ...state,
-        status: payload.status,
+        code: payload.code,
       };
     },
     changeSubmitting(state, { payload }) {

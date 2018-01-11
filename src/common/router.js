@@ -35,6 +35,9 @@ export const getRouterData = (app) => {
     '/': {
       component: dynamicWrapper(app, ['user', 'login'], () => import('../layouts/BasicLayout')),
     },
+    '/hello': {
+      component: dynamicWrapper(app, [], () => import('../routes/Hinet/Home')),
+    },
     '/workspaces': {
       component: dynamicWrapper(app, ['workspace'], () => import('../routes/Hinet/WorkspaceList')),
     },
@@ -42,16 +45,16 @@ export const getRouterData = (app) => {
       component: dynamicWrapper(app, ['workspace'], () => import('../routes/Hinet/ModelList')),
     },
     '/model/:id': {
-      component: dynamicWrapper(app, ['form'], () => import('../routes/Hinet/StepForm')),
+      component: dynamicWrapper(app, ['model', 'job'], () => import('../routes/Hinet/StepForm')),
     },
     '/model/:id/dataset': {
-      component: dynamicWrapper(app, ['form', 'workspace'], () => import('../routes/Hinet/StepForm/Step1')),
+      component: dynamicWrapper(app, ['model'], () => import('../routes/Hinet/StepForm/Step1')),
     },
     '/model/:id/build': {
-      component: dynamicWrapper(app, ['form'], () => import('../routes/Hinet/StepForm/Step2')),
+      component: dynamicWrapper(app, ['model'], () => import('../routes/Hinet/StepForm/Step2')),
     },
     '/model/:id/result': {
-      component: dynamicWrapper(app, ['form'], () => import('../routes/Hinet/StepForm/Step3')),
+      component: dynamicWrapper(app, ['model', 'job'], () => import('../routes/Hinet/StepForm/Step3')),
     },
     '/dashboard/analysis': {
       component: dynamicWrapper(app, ['chart'], () => import('../routes/Dashboard/Analysis')),

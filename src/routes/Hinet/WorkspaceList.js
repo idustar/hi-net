@@ -1,6 +1,7 @@
 import React, {PureComponent} from 'react';
 import {connect} from 'dva';
-import {Card, Button, Icon, List, Avatar} from 'antd';
+import {Card, Button, Icon, List, Avatar, Modal, Form, Input, message} from 'antd';
+import { routerRedux } from 'dva/router';
 
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import Ellipsis from '../../components/Ellipsis';
@@ -11,6 +12,44 @@ import styles from './WorkspaceList.less';
   list: state.workspace,
 }))
 export default class WorkspaceList extends PureComponent {
+  constructor(props) {
+    super(props);
+    this.state = {
+      modalVisible: false,
+      addInputValue: '',
+    }
+  }
+
+  handleModalVisible = (flag) => {
+    this.setState({
+      modalVisible: !!flag,
+    });
+  }
+
+  handleAddInput = (e) => {
+    this.setState({
+      addInputValue: e.target.value,
+    });
+  }
+
+  handleAdd = () => {
+    this.props.dispatch({
+      type: 'workspace/add',
+      payload: this.state.addInputValue,
+    });
+
+    this.setState({
+      modalVisible: false,
+    });
+  }
+
+  handleDelete = (id) => {
+    this.props.dispatch({
+      type: 'workspace/rm',
+      payload: id,
+    });
+  }
+
   componentDidMount() {
     this.props.dispatch({
       type: 'workspace/fetch',
@@ -26,10 +65,10 @@ export default class WorkspaceList extends PureComponent {
     const content = (
       <div className={styles.pageHeaderContent}>
         <p>
-          Description of workspaces
+          A workspace is a set of models and notebooks.
         </p>
         <div className={styles.contentLink}>
-          <a>
+          <a onClick={() => this.handleModalVisible(true)}>
             <img alt="" src="https://gw.alipayobjects.com/zos/rmsportal/MjEImQtenlyueSmVEfUD.svg"/> New Workspace
           </a>
           <a>
@@ -44,7 +83,7 @@ export default class WorkspaceList extends PureComponent {
 
     const extraContent = (
       <div className={styles.extraImg}>
-        <img alt="这是一个标题" src="https://gw.alipayobjects.com/zos/rmsportal/RzwpdLnhmvDJToTdfDPe.png"/>
+        <img alt="png" src="https://gw.alipayobjects.com/zos/rmsportal/RzwpdLnhmvDJToTdfDPe.png"/>
       </div>
     );
 
@@ -66,23 +105,22 @@ export default class WorkspaceList extends PureComponent {
                     hoverable
                     className={styles.card}
                     actions={[
-                      <a><Icon type="ellipsis"/>&nbsp;&nbsp;View</a>,
-                      <a><Icon type="delete"/>&nbsp;&nbsp;Delete</a>
+                      <a onClick={() => {this.props.dispatch(routerRedux.push(`/workspace/${item.id}`));}}>
+                        <Icon type="ellipsis"/>&nbsp;&nbsp;View
+                      </a>,
+                      <a onClick={() => this.handleDelete(item.id)}><Icon type="delete"/>&nbsp;&nbsp;Delete</a>
                     ]}>
                     <Card.Meta
                       avatar={<Avatar
                         style={{color: '#e2e4f5', backgroundColor: '#1e75fd', verticalAlign: 'middle'}}
-                        size="large">{item.title.charAt(0)}</Avatar>}
-                      title={<a href="#">{item.title}</a>}
-                      description={(
-                        <Ellipsis className={styles.item} lines={3}>{item.description}</Ellipsis>
-                      )}
+                        size="large">{item.name.charAt(0)}</Avatar>}
+                      title={<a href="#">{item.name}</a>}
                     />
                   </Card>
                 </List.Item>
               ) : (
                 <List.Item>
-                  <Button type="dashed" className={styles.newButton}>
+                  <Button type="dashed" className={styles.newButton} onClick={() => this.handleModalVisible(true)}>
                     <Icon type="plus"/> New Workspace
                   </Button>
                 </List.Item>
@@ -90,6 +128,20 @@ export default class WorkspaceList extends PureComponent {
             )}
           />
         </div>
+        <Modal
+          title="New workspace"
+          visible={this.state.modalVisible}
+          onOk={this.handleAdd}
+          onCancel={() => this.handleModalVisible()}
+        >
+          <Form.Item
+            labelCol={{ span: 5 }}
+            wrapperCol={{ span: 15 }}
+            label="name"
+          >
+            <Input placeholder="please input" onChange={this.handleAddInput} value={this.state.addInputValue} />
+          </Form.Item>
+        </Modal>
       </PageHeaderLayout>
     );
   }

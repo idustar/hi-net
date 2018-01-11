@@ -3,7 +3,7 @@ import { connect } from 'dva';
 import {
   Form, Input, DatePicker, Select, Button, Card, InputNumber, Radio, Icon, Tooltip,
 } from 'antd';
-import PageHeaderLayout from '../../layouts/PageHeaderLayout';
+
 import styles from './style.less';
 
 const FormItem = Form.Item;
@@ -51,8 +51,6 @@ export default class BasicForms extends PureComponent {
     };
 
     return (
-      <PageHeaderLayout title="基础表单" content="表单页用于向用户收集或验证信息，基础表单常见于数据项较少的表单场景。">
-        <Card bordered={false}>
           <Form
             onSubmit={this.handleSubmit}
             hideRequiredMark
@@ -178,11 +176,8 @@ export default class BasicForms extends PureComponent {
               <Button type="primary" htmlType="submit" loading={submitting}>
                 提交
               </Button>
-              <Button style={{ marginLeft: 8 }}>保存</Button>
             </FormItem>
           </Form>
-        </Card>
-      </PageHeaderLayout>
     );
   }
 }

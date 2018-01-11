@@ -19,6 +19,7 @@ function RouterConfig({ history, app }) {
     <LocaleProvider locale={en}>
       <Router history={history}>
         <Switch>
+          <Route path="/hello" component={routerData['/hello'].component} />
           <Route path="/user" render={props => <UserLayout {...props} />} />
           <Route path="/" render={props => <BasicLayout {...props} />} />
         </Switch>

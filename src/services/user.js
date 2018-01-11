@@ -5,5 +5,14 @@ export async function query() {
 }
 
 export async function queryCurrent() {
-  return request('/api/currentUser');
+  if (localStorage.hasOwnProperty('id')) {
+    return {
+      id: localStorage.getItem('id'),
+      email: localStorage.getItem('email'),
+    }
+  } else {
+    return {
+      error: true
+    }
+  }
 }

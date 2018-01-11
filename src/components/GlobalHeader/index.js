@@ -74,11 +74,13 @@ export default class GlobalHeader extends PureComponent {
               type="code-o"
             />
           </Tooltip>
-          {currentUser.name ? (
+          {currentUser.id ? (
             <Dropdown overlay={menu}>
               <span className={`${styles.action} ${styles.account}`}>
-                <Avatar size="small" className={styles.avatar} src={currentUser.avatar}/>
-                <span className={styles.name}>{currentUser.name}</span>
+                <Avatar
+              style={{color: '#e2e4f5', backgroundColor: '#1e75fd', verticalAlign: 'middle', marginRight: 8}}
+                size="small">{currentUser.email.charAt(0)}</Avatar>
+                <span className={styles.name}>{currentUser.email}</span>
               </span>
             </Dropdown>
           ) : <Spin size="small" style={{marginLeft: 8}}/>}

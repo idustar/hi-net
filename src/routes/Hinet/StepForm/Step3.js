@@ -1,59 +1,108 @@
 import React from 'react';
-import { connect } from 'dva';
-import { Button, Row, Col } from 'antd';
-import { routerRedux } from 'dva/router';
+import {connect} from 'dva';
+import {Button, Row, Col, Tooltip, Icon, Menu, Dropdown, Avatar} from 'antd';
+import {routerRedux} from 'dva/router';
 import Result from '../../../components/Result';
 import styles from './style.less';
+import TrainingForm from '../../../components/Hinet/TrainingForm';
+import {WaterWave, ChartCard, Field} from '../../../components/Charts';
+import FooterToolbar from '../../../components/FooterToolbar';
+import {dateFtt} from '../../../utils/utils';
+
 
 class Step3 extends React.PureComponent {
   render() {
-    const { dispatch, data } = this.props;
-    const onFinish = () => {
-      dispatch(routerRedux.push('/form/step-form'));
+    const colors = ['#ff4d4f', '#fadb14', '#389e0d', '#5b8dff'];
+    const {dispatch, jobs, job} = this.props;
+    const onPrev = () => {
+      dispatch(routerRedux.push(`/model/${this.props.match.params.id}/build`));
+    };
+    const menuClick = ({key}) => {
+      this.props.dispatch({
+        type: 'job/fetchJob',
+        payload: jobs[key].id,
+      })
     };
     const information = (
       <div className={styles.information}>
-        <Row>
-          <Col span={8} className={styles.label}>付款账户：</Col>
-          <Col span={16}>{data.payAccount}</Col>
-        </Row>
-        <Row>
-          <Col span={8} className={styles.label}>收款账户：</Col>
-          <Col span={16}>{data.receiverAccount}</Col>
-        </Row>
-        <Row>
-          <Col span={8} className={styles.label}>收款人姓名：</Col>
-          <Col span={16}>{data.receiverName}</Col>
-        </Row>
-        <Row>
-          <Col span={8} className={styles.label}>转账金额：</Col>
-          <Col span={16}><span className={styles.money}>{data.amount}</span> 元</Col>
-        </Row>
+        goodbye
       </div>
     );
-    const actions = (
+    const menu = (
+      <Menu onClick={menuClick}>
+        {jobs.map((e, index) => (
+          <Menu.Item key={index}>
+            <a style={{color: job.id === e.id ? '#5b8dff' : undefined}}>
+              {`${dateFtt("yyyy-MM-dd hh:mm:ss", e.createTime)}`}
+            </a>
+          </Menu.Item>
+        ))}
+      </Menu>
+    );
+
+    const footer = (
       <div>
-        <Button type="primary" onClick={onFinish}>
-          再转一笔
-        </Button>
-        <Button>
-          查看账单
-        </Button>
+        <Field label="Iteration 1" value={'itttt'}/>
       </div>
     );
     return (
-      <Result
-        type="success"
-        title="操作成功"
-        description="预计两小时内到账"
-        extra={information}
-        actions={actions}
-        className={styles.result}
-      />
+      <div>
+        {job ? (
+          <Row gutter={10} style={{marginBottom: 60}}>
+            <Col span={18}>
+              <div style={{width: '100%', border: '1px solid #eeeeee', padding: 20, marginBottom: 10}}>
+                <TrainingForm/>
+              </div>
+              <div style={{width: '100%', border: '1px solid #eeeeee', padding: 20}}>
+                charts
+              </div>
+            </Col>
+            <Col span={6}>
+              <ChartCard
+                title={'Training Time'}
+                avatar={
+                  <Avatar size='large' style={{ backgroundColor: '#87d068' }}>{jobs.find(e=>e.id===job.id).id}</Avatar>
+                }
+                action={<Tooltip title="You can view your former training jobs by the dropdown menu.">
+                  <Icon type="info-circle-o" /></Tooltip>}
+                total={job.finishTime && job.startTime ?
+                  `${((job.finishTime - job.startTime)/1000).toFixed(2)} s`: 'Training...'}
+              />
+              <ChartCard
+                title={`${dateFtt("yyyy-MM-dd hh:mm:ss", job.createTime)}`}
+                action={<Dropdown overlay={menu}><Icon type="sync"/></Dropdown>}
+                contentHeight={200}
+                footer={footer}
+              >
+                <div style={{textAlign: 'center'}}>
+                  <WaterWave
+                    color={colors[parseInt(job.accuracy / 0.4, 10)]}
+                    height={161}
+                    title="Accuracy"
+                    percent={job.accuracy * 100}
+                  />
+                </div>
+              </ChartCard>
+            </Col>
+          </Row>
+        ) : (
+          <div style={{width: '100%', border: '1px solid #eeeeee', padding: 20, marginBottom: 10}}>
+            <TrainingForm/>
+          </div>
+        )}
+
+        <FooterToolbar children={
+          <Button type="dashed" onClick={onPrev} key={0}>
+            Prev Step
+          </Button>
+        }/>
+
+      </div>
     );
   }
 }
 
-export default connect(({ form }) => ({
-  data: form.step,
+export default connect(({model, job}) => ({
+  jobs: job.jobs,
+  job: job.job,
 }))(Step3);

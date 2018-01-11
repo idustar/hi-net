@@ -5,10 +5,11 @@ const menuData = [{
 }, {
   name: 'Workspace',
   path: 'workspace/:id',
-  hideInMenu: false,
+  hideInMenu: true,
 }, {
   name: 'Model',
   path: 'model/:id',
+  hideInMenu: true,
 }, {
   name: 'dashboard',
   icon: 'dashboard',
@@ -84,6 +85,7 @@ const menuData = [{
   name: '结果页',
   icon: 'check-circle-o',
   path: 'result',
+  hideInMenu: true,
   children: [{
     name: '成功',
     path: 'success',

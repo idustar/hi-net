@@ -57,12 +57,11 @@ export default class LoginPage extends Component {
         >
           <Tab key="account" tab="Account and password">
             {
-              login.status === 'error' &&
-              login.type === 'account' &&
+              login.code >= 400  &&
               login.submitting === false &&
               this.renderMessage('Wrong username or password.')
             }
-            <UserName name="userName"/>
+            <UserName name="email"/>
             <Password name="password"/>
           </Tab>
 

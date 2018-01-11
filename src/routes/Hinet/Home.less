@@ -1,0 +1,70 @@
+.container {
+  overflow: hidden; /* 划重点 */
+  width: 100vw;
+  height: 100vh;
+}
+
+.inner {
+  height: calc(100vh + 5px);
+  margin-right: -15px;
+  overflow: scroll;
+}
+
+.topBanner {
+  background-image: url("https://media.wired.com/photos/59268c8ccfe0d93c474309b2/master/pass/GettyImages-627219854.jpg");
+  text-align: center;
+  border-color: #666;
+  background-size: cover;
+  background-position: 50%;
+  display: block;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  height: 100vh;
+  right: 0;
+  width: 100vw;
+  z-index: -1;
+  padding-top: 200px;
+  color: #fff;
+  font-size: 20px;
+
+  .bannerWrapper {
+    margin: auto;
+  }
+
+  .logo {
+    width: 100%;
+  }
+
+  button {
+    margin-top: 80px;
+    margin-bottom: 200px;
+  }
+}
+
+.detail {
+  margin-bottom: 30px;
+  text-align: center;
+  background: #fff;
+
+  img {
+    width: 30%;
+  }
+
+  .detailTitle {
+    font-size: 32px;
+    font-weight: 400;
+    color: #404040;
+    line-height: 48px;
+    margin-top: 80px;
+    margin-bottom: 40px;
+  }
+
+  .featureTitle {
+    font-size: 2.17em;
+  }
+
+  .featureContent {
+    font-size: 17px;
+  }
+}
