@@ -45,10 +45,25 @@ class Step3 extends React.PureComponent {
       </Menu>
     );
 
+
+    if (!job || !job.id) {
+      return (
+        <div>
+          <div style={{width: '100%', border: '1px solid #eeeeee', padding: 20, marginBottom: 10}}>
+            <TrainingForm/>
+          </div>
+          <FooterToolbar children={
+            <Button type="dashed" onClick={onPrev} key={0}>
+              Prev Step
+            </Button>
+          }/>
+        </div>
+      )
+    }
     const footer = (
       <div>
         <Tooltip placement='left' title={job.message || 'SUCCESS'}>
-        <Field label="Message" value={job.message ? 'ERROR' : 'SUCCESS'}/>
+          <Field label="Message" value={job.message ? 'ERROR' : 'SUCCESS'}/>
         </Tooltip>
       </div>
     );
@@ -58,10 +73,13 @@ class Step3 extends React.PureComponent {
           <Row gutter={10} style={{marginBottom: 60}}>
             <Col span={18}>
               <div style={{width: '100%', border: '1px solid #eeeeee', padding: 20, marginBottom: 10}}>
-                <TrainingForm onTrain={() => this.training}/>
+                <TrainingForm/>
               </div>
-              <div style={{border: '1px solid #eeeeee', padding: 20}}>
-                <StatChart style={{width: '100%'}} data={state}/>
+              <div style={{border: '1px solid #eeeeee', padding: 20, width: '100%'}}>
+                <Row>
+                  <Col span={24}>
+                <StatChart data={state}/>
+                  </Col></Row>
               </div>
             </Col>
             <Col span={6}>
@@ -119,15 +137,23 @@ class Step3 extends React.PureComponent {
 }
 
 export default connect(({model, job}) => {
+  if (!job.job || !job.job.id) {
+    return {
+      jobs: job.jobs,
+      job: job.job,
+      state: [],
+      total: 0,
+      percent: 0,
+    }
+  }
   const state = job.job ? JSON.parse(job.job.state || '[]') : [];
   const total = (job.epochs && job.batchSize && model.model.datasetId) ?
     Math.round(model.datasets.find(e => e.id === model.model.datasetId).amount * job.epochs / job.batchSize) : 0;
   const percent = total ? (state.length / total * 100) : 0;
-
   return {
     jobs: job.jobs,
     job: job.job,
-    state: job.job.finishTime?state:[...state, {iteration: total, score: null}],
+    state: state.length && job.job.finishTime?state:[...state, {iteration: total, score: null}],
     total,
     percent: percent > 100 ? 100 : percent,
   }

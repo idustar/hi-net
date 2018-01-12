@@ -15,7 +15,7 @@ class StatChart extends React.Component {
 
     return (
       <div>
-        <Chart height={500} data={data} forceFit>
+        <Chart height={500} width={700} forceFit data={data}>
           <Axis name="iteration"/>
           <Axis name="score"/>
           <Tooltip showTitle={false} itemTpl='<li data-index={index}><span style="background-color:{color};" class="g2-tooltip-marker"></span>{name}: {value}</li>' />
