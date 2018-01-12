@@ -28,6 +28,7 @@ export default {
         epochs,
         batchSize
       });
+      setTimeout(()=>put({type: 'train'}), 5000);
       if (response.code === 200 && response.result && response.result.id) {
         yield put({type: 'fetch'});
         const response1 = yield call(startJob, response.result.id);
@@ -43,6 +44,9 @@ export default {
         type: 'changeLoading',
         payload: false,
       });
+    },
+    * train(_, {call, put, select}) {
+      console.log('hello')
     },
 
     * fetch({payload}, {call, put, select}) {

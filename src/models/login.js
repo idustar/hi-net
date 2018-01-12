@@ -24,7 +24,7 @@ export default {
       if (response.code === 200) {
         localStorage.setItem('id', response.result.id);
         localStorage.setItem('email', response.result.email);
-        yield put(routerRedux.push('/'));
+        yield put(routerRedux.push('/workspaces'));
       }
     },
     *logout(_, { put }) {

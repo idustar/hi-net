@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from 'dva';
+import {Link} from 'dva/router';
 import moment from 'moment';
 import {
   Row,
@@ -113,7 +114,8 @@ export default class AllPost extends Component {
       <div className={styles.listContent}>
         <div className={styles.description}>{content}</div>
         <div className={styles.extra}>
-          <Avatar size="small" style={{backgroundColor: '#2286ff'}}>{userId.charAt(0)}</Avatar><a>{userId}</a> Published
+          <Avatar size="small" style={{backgroundColor: '#2286ff'}}>{userId.charAt(0)}</Avatar>
+          <Link to={`/posts/${userId}`}>{userId}</Link> Published
           at
           <em>{dateFtt('yyyy-MM-dd hh:mm', timeStamp)}</em>
         </div>

@@ -22,16 +22,18 @@ const {Meta} = Card;
 export default class AllPost extends Component {
   constructor(props) {
     super(props);
-    this.onCreate = this.onCreate.bind(this);
+
+    this.state = {
+      comment: '',
+    };
   }
 
-  onCreate() {
-    setTimeout(() => {
-      this.onShow();
-      this.setState({
-        newPost: false,
-      })
-    }, 500);
+  onChangeComment = (e) => {
+    this.setState({ comment: e.target.value });
+  }
+
+  onReply = (e) => {
+    this.setState({ comment: 'Reply to ' + e + ': '});
   }
 
   componentDidMount() {
@@ -55,6 +57,7 @@ export default class AllPost extends Component {
       },
     });
     setTimeout(() => this.onShow(), 500);
+    this.setState({comment: ''});
   }
 
   componentWillUnmount() {
@@ -100,7 +103,7 @@ export default class AllPost extends Component {
               key={item.postId}
               actions={[
                 <IconText type="like-o" text='like'/>,
-                <IconText type="message" text='reply'/>,
+                <IconText type="message" onClick={()=>this.onReply(item.userId)} text='reply'/>,
                 item.userId === userId ? <IconText type="delete" text='delete'
                 /> : null,
               ]}
@@ -110,7 +113,8 @@ export default class AllPost extends Component {
             </List.Item>
           )}
         />
-        <Search placeholder="Share your idea..." onSearch={value => this.onComment(value)}
+        <Search placeholder="Share your idea..." onSearch={value => this.onComment(value)} value={this.state.comment}
+                onChange={this.onChangeComment}
                 enterButton="Comment" size="default"/>
 
       </div>

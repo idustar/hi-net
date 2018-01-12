@@ -7,12 +7,26 @@ function hasErrors(fieldsError) {
 }
 
 @connect(state => ({
+  job: state.job.job,
 }))
 class HorizontalLoginForm extends React.Component {
   componentDidMount() {
     // To disabled submit button at the beginning.
     this.props.form.validateFields();
   }
+
+  training () {
+    const {job} = this.props;
+    if (job.startTime && (new Date()).valueOf() - job.startTime >= 120000) return;
+    if (!job.finishTime && !job.message) {
+      this.props.dispatch({
+        type: 'job/fetchJob',
+        payload: job.id,
+      });
+      setTimeout(()=>this.training(), 500);
+    }
+  }
+
   handleSubmit = (e) => {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
@@ -22,8 +36,10 @@ class HorizontalLoginForm extends React.Component {
           payload: values,
         });
         console.log('Received values of form: ', values);
+        setTimeout(()=>this.training(), 500);
       }
     });
+
   }
   render() {
     const { getFieldDecorator, getFieldsError, getFieldError, isFieldTouched } = this.props.form;

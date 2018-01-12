@@ -15,9 +15,9 @@ const menuData = [{
   name: 'Community',
   path: 'community',
 }, {
+    name: 'My Posts',
+    path: 'posts',
   icon: 'profile',
-  name: 'Posts',
-  path: 'posts',
 }, {
   name: '异常页',
   icon: 'warning',

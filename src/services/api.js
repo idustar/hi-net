@@ -1,7 +1,7 @@
 import { stringify } from 'qs';
 import request from '../utils/request';
 
-const apiUrl = 'http://115.159.68.131:8081';
+const apiUrl = 'http://192.168.1.103:8081';
 
 export async function login(params) {
   return request(`${apiUrl}/user/session`, {

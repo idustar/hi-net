@@ -65,7 +65,7 @@ export default class GlobalHeader extends PureComponent {
           </Tooltip>
           <Tooltip placement="bottom" title="community">
             <Icon
-              onClick={()=>dispatch(routerRedux.push('/community'))}
+              onClick={()=>dispatch(routerRedux.push('community'))}
               className={styles.trigger}
               type="team"
             />
