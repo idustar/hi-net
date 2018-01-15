@@ -1,6 +1,6 @@
-import { queryModelById, saveModel } from '../services/api';
-import { routerRedux } from 'dva/router';
-import { notification } from 'antd';
+import {queryModelById, saveModel, queryDatasets} from '../services/api';
+import {routerRedux} from 'dva/router';
+import {notification} from 'antd';
 
 export default {
   namespace: 'model',
@@ -16,6 +16,7 @@ export default {
     model: {},
     epochs: undefined,
     batchSize: undefined,
+    self_datasets: [],
     datasets: [{
       id: 11,
       type: 'conv',
@@ -146,24 +147,24 @@ export default {
       const current = yield select(state => state.model.model);
       const globalVariable = yield select(state => state.model.globalVariable);
       if (!current.datasetId) {
-        notification.error({message:'save failed!', description: 'no dataset selected.'});
+        notification.error({message: 'save failed!', description: 'no dataset selected.'});
         return;
       }
       const outputs = layers.filter(e => e.layerId === 4);
       if (outputs.length === 0) {
-        notification.error({message:'Layers are invalid!', description: 'An output layer is required!'});
+        notification.error({message: 'Layers are invalid!', description: 'An output layer is required!'});
         return;
       } else if (outputs.length > 1) {
-        notification.error({message:'Layers are invalid!', description: 'Only one output layer in a model!'});
+        notification.error({message: 'Layers are invalid!', description: 'Only one output layer in a model!'});
         return;
       } else if (layers[layers.length - 1].layerId !== 4) {
-        notification.error({message:'Layers are invalid!', description: 'The output layer is not the last layer!'});
+        notification.error({message: 'Layers are invalid!', description: 'The output layer is not the last layer!'});
         return;
       } else if (layers.length === 1) {
-        notification.error({message:'Layers are invalid!', description: 'You must add layers except output layer!'});
+        notification.error({message: 'Layers are invalid!', description: 'You must add layers except output layer!'});
         return;
       } else if (layers.length > 12) {
-        notification.warning({message:'Layers are invalid!', description: 'only VIP users can add so many layers!'});
+        notification.warning({message: 'Layers are invalid!', description: 'only VIP users can add so many layers!'});
         return;
       }
       const config = {
@@ -182,9 +183,9 @@ export default {
       }
       const response = yield call(saveModel, params);
       if (response.code === 200) {
-        notification.success({message:'saved!'});
+        notification.success({message: 'saved!'});
       } else {
-        notification.error({message:'save failed!'});
+        notification.error({message: 'save failed!'});
       }
     },
     * dealCard({payload}, {call, put}) {
@@ -207,13 +208,31 @@ export default {
         payload: true,
       });
       const response = yield call(queryModelById, payload);
-      console.log(response);
       if (!(response.code && response.code === 200)) {
         yield put(routerRedux.push('/404'));
       } else {
         yield put({
           type: 'queryModel',
           payload: response.result,
+        });
+      }
+      yield put({
+        type: 'changeLoading',
+        payload: false,
+      });
+    },
+    * fetchDatasets({payload}, {call, put}) {
+      yield put({
+        type: 'changeLoading',
+        payload: true,
+      });
+      const response = yield call(queryDatasets);
+      if (!(response.code && response.code === 200)) {
+        yield put(routerRedux.push('/404'));
+      } else {
+        yield put({
+          type: 'saveDatasets',
+          payload: Array.isArray(response.result) ? response.result : [],
         });
       }
       yield put({
@@ -239,13 +258,31 @@ export default {
       }
     },
     saveDatasetId(state, {payload: datasetId}) {
+      if (datasetId)
+        return {
+          ...state,
+          cards: [],
+          model: {
+            ...state.model, datasetId,
+            datasetName: state.datasets.find(e => e.id === datasetId).dataset,
+            datasetType: state.datasets.find(e => e.id === datasetId).type,
+          },
+        }
+      else
+        return {
+          ...state,
+          cards: [],
+          model: {
+            ...state.model, datasetId: null,
+            datasetName: null,
+            datasetType: null,
+          },
+        }
+    },
+    saveDatasets(state, {payload}) {
       return {
         ...state,
-        cards: [],
-        model: {...state.model, datasetId,
-          datasetName: state.datasets.find(e => e.id === datasetId).dataset,
-          datasetType: state.datasets.find(e => e.id === datasetId).type,
-        },
+        self_datasets: payload,
       }
     },
     queryModel(state, action) {

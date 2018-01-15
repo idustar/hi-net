@@ -1,7 +1,7 @@
 import { stringify } from 'qs';
 import request from '../utils/request';
 
-const apiUrl = 'http://192.168.1.103:8081';
+import {apiUrl, hadoopUrl} from './config';
 
 export async function login(params) {
   return request(`${apiUrl}/user/session`, {
@@ -94,83 +94,18 @@ export async function startJob(id) {
   });
 }
 
-
-
-
-
-export async function queryProjectNotice() {
-  return request('/api/project/notice');
+export async function queryDatasets() {
+  return request(`${hadoopUrl}/dataset`);
 }
 
-export async function queryActivities() {
-  return request('/api/activities');
+export async function downloadDataset(id) {
+  return request(`${hadoopUrl}/dataset/download?id=${id}`);
 }
 
-export async function queryRule(params) {
-  return request(`/api/rule?${stringify(params)}`);
-}
-
-export async function removeRule(params) {
-  return request('/api/rule', {
-    method: 'POST',
-    body: {
-      ...params,
-      method: 'delete',
-    },
-  });
-}
-
-export async function addRule(params) {
-  return request('/api/rule', {
-    method: 'POST',
-    body: {
-      ...params,
-      method: 'post',
-    },
-  });
-}
-
-export async function fakeSubmitForm(params) {
-  return request('/api/forms', {
+export async function uploadDataset(params) {
+  return request(`${hadoopUrl}/dataset`, {
     method: 'POST',
     body: params,
   });
 }
 
-export async function fakeChartData() {
-  return request('/api/fake_chart_data');
-}
-
-export async function queryTags() {
-  return request('/api/tags');
-}
-
-export async function queryBasicProfile() {
-  return request('/api/profile/basic');
-}
-
-export async function queryAdvancedProfile() {
-  return request('/api/profile/advanced');
-}
-
-export async function queryFakeList(params) {
-  return request(`/api/fake_list?${stringify(params)}`);
-}
-
-export async function fakeAccountLogin(params) {
-  return request('/api/login/account', {
-    method: 'POST',
-    body: params,
-  });
-}
-
-export async function fakeRegister(params) {
-  return request('/api/register', {
-    method: 'POST',
-    body: params,
-  });
-}
-
-export async function queryNotices() {
-  return request('/api/notices');
-}
